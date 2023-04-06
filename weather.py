@@ -2,20 +2,25 @@ import tabulate
 import requests
 from bs4 import BeautifulSoup
 import numpy as np
+np.set_printoptions(threshold=None)
 
-spisokurl = ['https://pogoda.mail.ru/prognoz/paris/january-2022/',\
-             'https://pogoda.mail.ru/prognoz/paris/february-2022/',\
-             'https://pogoda.mail.ru/prognoz/paris/march-2022/',\
-             'https://pogoda.mail.ru/prognoz/paris/april-2022/',\
-             'https://pogoda.mail.ru/prognoz/paris/may-2022/',\
-             'https://pogoda.mail.ru/prognoz/paris/june-2022/',\
-             'https://pogoda.mail.ru/prognoz/paris/july-2022/',\
-             'https://pogoda.mail.ru/prognoz/paris/august-2022/',\
-             'https://pogoda.mail.ru/prognoz/paris/september-2022/',\
-             'https://pogoda.mail.ru/prognoz/paris/october-2022/',\
-             'https://pogoda.mail.ru/prognoz/paris/november-2022/',\
-             'https://pogoda.mail.ru/prognoz/paris/december-2022/']
 
+spisokurl = ['https://pogoda.mail.ru/prognoz/brest_belarus/january-2022/',\
+             'https://pogoda.mail.ru/prognoz/brest_belarus/february-2022/',\
+             'https://pogoda.mail.ru/prognoz/brest_belarus/march-2022/',\
+             'https://pogoda.mail.ru/prognoz/brest_belarus/april-2022/',\
+             'https://pogoda.mail.ru/prognoz/brest_belarus/may-2022/',\
+             'https://pogoda.mail.ru/prognoz/brest_belarus/june-2022/',\
+             'https://pogoda.mail.ru/prognoz/brest_belarus/july-2022/',\
+             'https://pogoda.mail.ru/prognoz/brest_belarus/august-2022/',\
+             'https://pogoda.mail.ru/prognoz/brest_belarus/september-2022/',\
+             'https://pogoda.mail.ru/prognoz/brest_belarus/october-2022/',\
+             'https://pogoda.mail.ru/prognoz/brest_belarus/november-2022/',\
+             'https://pogoda.mail.ru/prognoz/brest_belarus/december-2022/']
+
+year = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+n = 0
+data = [['Месяц', 'День', 'Минимум', 'Максимум', 'Средняя', 'Дисперсия', 'Ночь', 'Минимум', 'Максимум', 'Средняя', 'Дисперсия']]
 
 def parser(url):
     rowdata = []; fp = []
@@ -33,10 +38,6 @@ def parser(url):
 
 def info(monthDAY, monthNIGHT):
     return monthDAY.min(), monthDAY.max(), float(monthDAY.mean()), monthDAY.var(), monthNIGHT.min(), monthNIGHT.max(), float(monthNIGHT.mean()), monthNIGHT.var()
-
-year = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
-n = 0
-data = [['Месяц', 'День', 'Минимум', 'Максимум', 'Средняя', 'Дисперсия', 'Ночь', 'Минимум', 'Максимум', 'Средняя', 'Дисперсия']]
 
 for m in year:
     monthDAY, monthNIGHT = parser(spisokurl[n])
