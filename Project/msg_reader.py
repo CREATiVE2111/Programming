@@ -21,9 +21,25 @@ def connect():
 
     id_list = data[0].split(); id_list2 = data2[0].split()
 
+    mail.select('Buy', readonly=False)
+    resultB, dataB = mail.uid('search', None, "ALL")
+    mail.select('Sell', readonly=False)
+    resultS, dataS = mail.uid('search', None, "ALL")
+
+    try:
+        dataB = dataB[0].split()
+        dataB = str(dataB[-1])[2:-1]
+    except: pass
+    try:
+        dataS = dataS[0].split()
+        dataS = str(dataS[-1])[2:-1]
+    except: pass
+
+    mail.select('inbox', readonly=False)
+
     for i in range(len(id_list)):
         id_list[i] = format(id_list[i])
-    return mail, id_list, id_list2
+    return mail, id_list, id_list2, dataB, dataS
 
 def get_need_msg(mail_id, mail):
     result, data = mail.uid('fetch', mail_id, "(RFC822)")
@@ -76,7 +92,6 @@ def create():
         con.commit()
         con.close()
 
-
 def updcount(count, id):
     con = sqlite3.connect("sale.db")
     cur = con.cursor()
@@ -85,14 +100,12 @@ def updcount(count, id):
     con.commit()
     con.close()
 
-
 def add2table(product, price, status):
     con = sqlite3.connect("sale.db")
     cur = con.cursor()
     cur.execute(f"INSERT INTO storage (product, price, status) VALUES (?, ?, ?);", (product, price, status[:-1]))
     con.commit()
     con.close()
-
 
 def get_count():
     con = sqlite3.connect("sale.db")
@@ -121,20 +134,25 @@ def sep(mail_id, id_list2, ch):
         delete_res = mail.store(mail_id, '+FLAGS', '\\Deleted')
     mail.expunge()
 
-
 create()
-mail, id_list, id_list2 = connect()
+mail, id_list, id_list2, dataB, dataS = connect()
 count = int(get_count())
-
+count = max(int(dataB), int(dataS), int(count))
+for i in id_list:
+    n = int(i)
+    if n > count:
+        count = int(id_list[id_list.index(i)-1])
+        break
 if count == 0:
     id_list.insert(0, '0')
-
-q = 0
-for i in range((len(id_list) - 1), int(id_list.index(str(count))), -1):
-    raw_email_string = get_need_msg(id_list[i], mail)
-    q += 1
-    print(q)
+print(count, int(id_list[-1]))
+if count <= int(id_list[-1]):
+    q = 0
+    for i in range((len(id_list)-1), int(id_list.index(str(count))), -1):
+        raw_email_string = get_need_msg(id_list[i], mail)
+        q += 1
+        print(q)
 
 updcount(len(id_list), id_list[-1])
 
-print(analytics())
+print(f"Прибыль: {analytics()}")
